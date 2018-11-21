@@ -26,13 +26,13 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 //Toast.makeText(ctx,"아이디는"+etID.getText().toString()+"비밀번호는"+etPass.getText().toString()+"입니다",Toast.LENGTH_LONG).show();
                 //Validation 유효성 체크
-                if (etID.getText().length() != 0 && etPass.getText().length() != 0) {
+                if (etID.getText().length()!= 0 && etPass.getText().length()!= 0) {
                      String id = etID.getText().toString();
                      String pw = etPass.getText().toString();
                      Log.d("아이디값",id);
                      Log.d("비밀번호",pw);
                    final itemExist query = new itemExist(ctx);
-                    query.id =id;
+                    query.id = id;
                     query.pw = pw;
                     new Main.ExcuteService() {
                         @Override
@@ -88,16 +88,17 @@ public class Login extends AppCompatActivity {
         }
 
         public boolean execute() {
-            /*String s =String.format("SELECT * FROM %s " +
+           String s =String.format("SELECT * FROM %s " +
                             " WHERE %s LIKE '%s' AND '%s' LIKE '%s'",
                     DBInfo.MBR_TABLE, DBInfo.MBR_SEQ, id,
-                    DBInfo.MBR_PASS, pw);*/
+                    DBInfo.MBR_PASS, pw);
+           Log.d("실행 쿼리",s);
             return super
                     .getDatabase()
                     .rawQuery(String.format("SELECT * FROM %s " +
-                                    " WHERE %s LIKE '%s' AND '%s' LIKE '%s' ",
+                                    " WHERE %s LIKE '%s' AND %s LIKE '%s' ",
                             DBInfo.MBR_TABLE, DBInfo.MBR_SEQ, id,
-                            DBInfo.MBR_PASS, pw), null)//null인 이유는 또하나의 설정값이 있기 때문에
+                            DBInfo.MBR_PASS, pw ), null)//null인 이유는 또하나의 설정값이 있기 때문에
                     .moveToNext(); //커서가 이동하면서 체크
 
         }

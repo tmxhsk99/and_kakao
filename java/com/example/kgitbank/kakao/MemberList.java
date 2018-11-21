@@ -7,11 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.example.kgitbank.kakao.Memeber;
 
 import java.lang.reflect.Array;
@@ -27,21 +32,13 @@ public class MemberList extends AppCompatActivity {
         final Context ctx = MemberList.this;
         ListView mbrList = findViewById(R.id.mbrList);
         final ItemList query = new ItemList(ctx);
-        /*List<Memeber> s = (List<Memeber>) new Main.ListService() {
+
+        mbrList.setAdapter(new MemberAdapter(ctx, (ArrayList<Memeber>) new Main.ListService() {
             @Override
             public List<?> perform() {
                 return query.execute();
             }
-        }.perform();*/
-        MemberAdapter memberAdapter = new MemberAdapter((ArrayList<Memeber>) new Main.ListService() {
-            @Override
-            public List<?> perform() {
-                return query.execute();
-            }
-        }.perform());
-
-       // Log.d("친구 목록", s.toString());
-
+        }.perform()));
 
         findViewById(R.id.btnAdd).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,14 +71,16 @@ public class MemberList extends AppCompatActivity {
         }
 
         public ArrayList<Memeber> execute() {
+            Log.d("excute", "1");
             ArrayList<Memeber> ls = new ArrayList<>();
             Cursor c = this.getDatabase().rawQuery(
                     "SELECT * FROM MEMBER", null
             );
             Memeber m = null;
             if (c != null) {
+                Log.d("excute", "2");
                 while (c.moveToNext()) {
-                    m= new Memeber();
+                    m = new Memeber();
                     m.setSeq(Integer.parseInt(c.getString(c.getColumnIndex(DBInfo.MBR_SEQ))));
                     m.setPass(c.getString(c.getColumnIndex(DBInfo.MBR_PASS)));
                     m.setName(c.getString(c.getColumnIndex(DBInfo.MBR_NAME)));
@@ -92,38 +91,99 @@ public class MemberList extends AppCompatActivity {
                     ls.add(m);
                 }
 
-            }else{
-                Log.d("등록된 회원은 ","없습니다.");
+            } else {
+                Log.d("등록된 회원은 ", "없습니다.");
             }
+            Log.d("excute", "3");
             return ls;
 
         }
     }
+
     /*아이템관련 파트 */
-    private  class MemberAdapter extends BaseAdapter{
+    private class MemberAdapter extends BaseAdapter {
         ArrayList<Memeber> ls;
-        public MemberAdapter(ArrayList<Memeber> ls) {
+        Context ctx;
+        LayoutInflater inflater;//글자 새긴 풍선
+
+        public MemberAdapter(Context ctx, ArrayList<Memeber> ls) {
             this.ls = ls;
+            this.ctx = ctx;
+            this.inflater = LayoutInflater.from(ctx);
         }
 
         @Override
         public int getCount() {
-            return 0;
+            return ls.size();
         }
 
         @Override
-        public Object getItem(int position) {
-            return null;
+        public Object getItem(int i) {
+            return ls.get(i);
         }
 
         @Override
-        public long getItemId(int position) {
-            return 0;
+        public long getItemId(int i) {
+            return i;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+        public View getView(int i, View v, ViewGroup g) {
+            ViewHolder holder;
+            if (v == null) {
+                v = inflater.inflate(R.layout.mbr_item, null);
+                holder = new ViewHolder();
+                //holder.photo = v.findViewById(R.id.photo);
+                holder.name = v.findViewById(R.id.name);
+                holder.phone = v.findViewById(R.id.phone);
+                v.setTag(holder);
+            } else {
+                holder = (ViewHolder) v.getTag();
+            }
+            holder.name.setText(ls.get(i).getName());
+            holder.phone.setText(ls.get(i).getPhone());
+            //포토 불러오는 코드
+
+            return v;
         }
     }
+
+    static class ViewHolder {
+        ImageView photo;
+        TextView name, phone;
+    }
+
+    private class PhotoQuery extends Main.QueryFactory {
+        SQLiteOpenHelper helper;
+
+        public PhotoQuery(Context ctx) {
+            super(ctx);
+            helper = new Main.SqliteHelper(ctx);
+        }
+
+        @Override
+        public SQLiteDatabase getDatabase() {
+            return helper.getReadableDatabase();
+        }
+    }
+
+    private class ItemPhoto extends PhotoQuery {
+
+        public ItemPhoto(Context ctx) {
+            super(ctx);
+        }
+
+        public ArrayList<String> execute() {
+            ArrayList<String> ls = new ArrayList<>();
+            Cursor c = this.getDatabase().rawQuery("SELECT MBR_SEQ FROM MEMBER ", null);
+            String s ;
+            while (c.moveToNext()){
+                //s=c.getString(c.getColumnIndex().DBInfo.MBR_SEQ);
+
+            }
+            return  null;
+        }
+    }
+
+
 }

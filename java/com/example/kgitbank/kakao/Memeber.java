@@ -2,7 +2,14 @@ package com.example.kgitbank.kakao;
 
 public class Memeber {
     int seq;
-    String name,pass,email,phone,addr,photo;
+    String name;
+    String pass;
+    String email;
+    String phone;
+    String addr;
+
+
+    String photo;
 
 
     public int getSeq() {
@@ -59,5 +66,17 @@ public class Memeber {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+    @Override
+    public String toString() {
+        return "Memeber{" +
+                "seq=" + seq +
+                ", name='" + name + '\'' +
+                ", pass='" + pass + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", addr='" + addr + '\'' +
+                ", photo='" + photo + '\'' +
+                '}';
     }
 }

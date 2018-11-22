@@ -49,6 +49,7 @@ public class MemberList extends AppCompatActivity {
                 startActivity(new Intent(ctx, MemberDetail.class));
             }
         });
+
         //Detail 처리하는 부분
         mbrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 public class MemberUpdate extends AppCompatActivity {
 
@@ -13,13 +15,20 @@ public class MemberUpdate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_update);
         final Context ctx = MemberUpdate.this;
+        final Intent intent = this.getIntent(); /*데이터 수신*/
+        String spec = intent.getExtras().getString("spec"); /*String형*/
+        Log.d("받은 것 ",spec);
+        String arr[] = spec.split("/");
+        TextView name =findViewById(R.id.name);
+        name.setHint(arr[3]);
+        TextView email = findViewById(R.id.email);
+        email.setHint(arr[2]);
+        TextView phone = findViewById(R.id.phone);
+        phone.setHint(arr[6]);
+        TextView addr= findViewById(R.id.addr);
+        addr.setHint(arr[1]);
 
-        findViewById(R.id.cancleBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ctx,MemberDetail.class));
-            }
-        });
+
         findViewById(R.id.updateBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

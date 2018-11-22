@@ -37,18 +37,7 @@ public class MemberDetail extends AppCompatActivity {
             }
         }.perform();
 
-        findViewById(R.id.moveUpdate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ctx,MemberUpdate.class));
-            }
-        });
-        findViewById(R.id.moveList).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ctx,MemberList.class));
-            }
-        });
+
     }//onCreate end (DB만들려면 여기 체크)
 
     /*데이터 베이스 영역 */
@@ -74,7 +63,7 @@ public class MemberDetail extends AppCompatActivity {
             }
 
             public Memeber execute(){
-                Memeber m = new Memeber();
+                Memeber m = null;
                 String s = String.format(" SELECT * FROM %s " +
                                 " WHERE %s LIKE '%s' ",
                         DBInfo.MBR_TABLE, DBInfo.MBR_SEQ, seq
@@ -83,6 +72,7 @@ public class MemberDetail extends AppCompatActivity {
                 Cursor c = this.getDatabase().rawQuery(s,null);
                 if(c!=null){
                     if (c.moveToNext()) {
+                        m =  new Memeber();
                         m.setSeq(Integer.parseInt(c.getString(c.getColumnIndex(DBInfo.MBR_SEQ))));
                         m.setPass(c.getString(c.getColumnIndex(DBInfo.MBR_PASS)));
                         m.setName(c.getString(c.getColumnIndex(DBInfo.MBR_NAME)));

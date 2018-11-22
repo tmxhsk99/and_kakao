@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,8 +31,10 @@ public class MemberList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_list);
         final Context ctx = MemberList.this;
-        ListView mbrList = findViewById(R.id.mbrList);
+        final ListView mbrList = findViewById(R.id.mbrList);
         final ItemList query = new ItemList(ctx);
+
+
 
         mbrList.setAdapter(new MemberAdapter(ctx, (ArrayList<Memeber>) new Main.ListService() {
             @Override
@@ -46,8 +49,28 @@ public class MemberList extends AppCompatActivity {
                 startActivity(new Intent(ctx, MemberDetail.class));
             }
         });
+        //Detail 처리하는 부분
+        mbrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> p, View v, int i, long l) {
+                Memeber m = (Memeber) mbrList.getItemAtPosition(i);
+                Log.d("선택한 ID",m.seq+"");
+                Intent intent = new Intent(ctx, MemberDetail.class);
+                intent.putExtra("seq",String.valueOf(m.seq));
+                startActivity(intent);
 
+            }
+        });
+        //삭제 처리  길게 누른거
+        mbrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                return false;
+            }
+        });
     }//OnCreate end
+
+
 
     //데이터 베이스에 대한  접근쿼리
     private class ListQuery extends Main.QueryFactory {//DB접근 권한은 제한한다 .
@@ -71,7 +94,6 @@ public class MemberList extends AppCompatActivity {
         }
 
         public ArrayList<Memeber> execute() {
-            Log.d("excute", "1");
             ArrayList<Memeber> ls = new ArrayList<>();
             Cursor c = this.getDatabase().rawQuery(
                     "SELECT * FROM MEMBER", null
@@ -133,7 +155,7 @@ public class MemberList extends AppCompatActivity {
             if (v == null) {
                 v = inflater.inflate(R.layout.mbr_item, null);
                 holder = new ViewHolder();
-                //holder.photo = v.findViewById(R.id.photo);
+                holder.photo = v.findViewById(R.id.photo);
                 holder.name = v.findViewById(R.id.name);
                 holder.phone = v.findViewById(R.id.phone);
                 v.setTag(holder);
@@ -143,7 +165,20 @@ public class MemberList extends AppCompatActivity {
             holder.name.setText(ls.get(i).getName());
             holder.phone.setText(ls.get(i).getPhone());
             //포토 불러오는 코드
-
+            final ItemPhoto query = new ItemPhoto(ctx);
+            query.seq = ls.get(i).seq+"";
+            String s = ((String)new Main.OjectService() {
+                @Override
+                public Object perform() {
+                    return query.execute();
+                }
+            }.perform()).toLowerCase();
+            Log.d("파일명 : ",s);
+            holder.photo
+                    .setImageDrawable(getResources().getDrawable(
+                            getResources().getIdentifier(
+                                    ctx.getPackageName()+":drawable/" +s,null,null),ctx.getTheme()
+                            ));
             return v;
         }
     }
@@ -153,7 +188,7 @@ public class MemberList extends AppCompatActivity {
         TextView name, phone;
     }
 
-    private class PhotoQuery extends Main.QueryFactory {
+   /* private class PhotoQuery extends Main.QueryFactory {//직접 친 코드
         SQLiteOpenHelper helper;
 
         public PhotoQuery(Context ctx) {
@@ -172,18 +207,56 @@ public class MemberList extends AppCompatActivity {
         public ItemPhoto(Context ctx) {
             super(ctx);
         }
-
+            String seq;
         public ArrayList<String> execute() {
             ArrayList<String> ls = new ArrayList<>();
-            Cursor c = this.getDatabase().rawQuery("SELECT MBR_SEQ FROM MEMBER ", null);
-            String s ;
+            Cursor c = this.getDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s LIKE '%s' ",
+                    DBInfo.MBR_PHOTO,DBInfo.MBR_TABLE,DBInfo.MBR_SEQ,seq),null);
+            String s ="";
             while (c.moveToNext()){
-                //s=c.getString(c.getColumnIndex().DBInfo.MBR_SEQ);
-
+                s=c.getString(c.getColumnIndex(DBInfo.MBR_SEQ));
+                ls.add(s);
             }
-            return  null;
+            return  ls;
+        }*/
+   private class PhotoQuery extends Main.QueryFactory{
+       Main.SqliteHelper helper;
+       public PhotoQuery(Context ctx) {
+           super(ctx);
+           helper =new Main.SqliteHelper(ctx);
+       }
+
+       @Override
+       public SQLiteDatabase getDatabase() {
+           return helper.getReadableDatabase();
+       }
+
+
+   }
+    private class ItemPhoto extends PhotoQuery{
+        String seq;
+        public ItemPhoto(Context ctx) {
+            super(ctx);
+        }
+        public String execute(){
+            Cursor c= getDatabase()
+                    .rawQuery(String.format(
+                            " SELECT %s FROM %s WHERE %s LIKE '%s' ",
+                            DBInfo.MBR_PHOTO,
+                            DBInfo.MBR_TABLE,
+                            DBInfo.MBR_SEQ,
+                            seq
+                    ),null);
+            String result = "";
+            if(c!= null){
+                if(c.moveToNext()){
+                    result = c.getString(c.getColumnIndex(DBInfo.MBR_PHOTO));
+                }
+            }
+            return result;
         }
     }
+
 
 
 }

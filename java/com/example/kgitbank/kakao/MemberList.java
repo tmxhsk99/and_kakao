@@ -1,10 +1,12 @@
 package com.example.kgitbank.kakao;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -17,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kgitbank.kakao.Memeber;
 
@@ -65,8 +68,40 @@ public class MemberList extends AppCompatActivity {
         //삭제 처리  길게 누른거
         mbrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                return false;
+            public boolean onItemLongClick(AdapterView<?> p, View v, int i, long l) {
+                Memeber m  = (Memeber) mbrList.getItemAtPosition(i);
+                new AlertDialog.Builder(ctx)
+                        .setTitle("삭 제")
+                        .setMessage("정말 삭제 하시겠습니까?")
+                        .setPositiveButton(
+                                (android.R.string.yes),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //삭제 쿼리
+                                        Toast.makeText(ctx,"삭제완료",Toast.LENGTH_LONG).show();
+                                        startActivity(new Intent(ctx,MemberList.class));
+                                    }
+                                }
+                        ).setNegativeButton(
+                        android.R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(ctx,"삭제취소",Toast.LENGTH_LONG).show();
+
+                            }
+                        }
+                ).show();
+
+                return true;//return 트루여야 반응을한다.
+            }
+        });
+        //추가
+        findViewById(R.id.btnAdd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ctx,MemberAdd.class));
             }
         });
     }//OnCreate end
@@ -74,6 +109,38 @@ public class MemberList extends AppCompatActivity {
 
 
     //데이터 베이스에 대한  접근쿼리
+    //삭제 쿼리
+    private class DeleteQuery extends  Main.QueryFactory{
+        SQLiteOpenHelper helper;
+        public DeleteQuery(Context ctx) {
+            super(ctx);
+            helper = new Main.SqliteHelper(ctx);
+        }
+
+        @Override
+        public SQLiteDatabase getDatabase() {
+            return helper.getWritableDatabase();
+        }
+
+    }
+    private  class ItemDelete extends DeleteQuery{
+        String seq;
+
+
+        public ItemDelete(Context ctx, String seq) {
+            super(ctx);
+            this.seq = seq;
+        }
+        public void execute(){
+            String sql = String.format(" DELETE FROM %s %s = '%s' " +
+                                        " WHERE %s LIKE '%s' "
+                                        );           //DELETE중
+            
+        }
+
+    }
+
+
     private class ListQuery extends Main.QueryFactory {//DB접근 권한은 제한한다 .
         SQLiteOpenHelper helper;
 
@@ -175,11 +242,21 @@ public class MemberList extends AppCompatActivity {
                 }
             }.perform()).toLowerCase();
             Log.d("파일명 : ",s);
+            try {
+
+
             holder.photo
                     .setImageDrawable(getResources().getDrawable(
                             getResources().getIdentifier(
                                     ctx.getPackageName()+":drawable/" +s,null,null),ctx.getTheme()
                             ));
+            }catch (Exception e){
+                holder.photo
+                        .setImageDrawable(getResources().getDrawable(
+                                getResources().getIdentifier(
+                                        ctx.getPackageName()+":drawable/" +"err",null,null),ctx.getTheme()
+                        ));
+            }
             return v;
         }
     }
@@ -189,37 +266,7 @@ public class MemberList extends AppCompatActivity {
         TextView name, phone,email,addr;
     }
 
-   /* private class PhotoQuery extends Main.QueryFactory {//직접 친 코드
-        SQLiteOpenHelper helper;
 
-        public PhotoQuery(Context ctx) {
-            super(ctx);
-            helper = new Main.SqliteHelper(ctx);
-        }
-
-        @Override
-        public SQLiteDatabase getDatabase() {
-            return helper.getReadableDatabase();
-        }
-    }
-
-    private class ItemPhoto extends PhotoQuery {
-
-        public ItemPhoto(Context ctx) {
-            super(ctx);
-        }
-            String seq;
-        public ArrayList<String> execute() {
-            ArrayList<String> ls = new ArrayList<>();
-            Cursor c = this.getDatabase().rawQuery(String.format("SELECT %s FROM %s WHERE %s LIKE '%s' ",
-                    DBInfo.MBR_PHOTO,DBInfo.MBR_TABLE,DBInfo.MBR_SEQ,seq),null);
-            String s ="";
-            while (c.moveToNext()){
-                s=c.getString(c.getColumnIndex(DBInfo.MBR_SEQ));
-                ls.add(s);
-            }
-            return  ls;
-        }*/
    private class PhotoQuery extends Main.QueryFactory{
        Main.SqliteHelper helper;
        public PhotoQuery(Context ctx) {

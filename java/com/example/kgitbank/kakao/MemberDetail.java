@@ -51,11 +51,18 @@ public class MemberDetail extends AppCompatActivity {
         addr.setText(m.getAddr());
         ImageView photo = findViewById(R.id.profile);
         Log.d("포토이름 -----------------------------------",m.photo);
-        photo.setImageDrawable(getResources().getDrawable(
-                        getResources().getIdentifier(
-                                ctx.getPackageName()+":drawable/" +m.photo.toLowerCase(),null,null),ctx.getTheme()
-                ));
-
+        try {
+            photo.setImageDrawable(getResources().getDrawable(
+                    getResources().getIdentifier(
+                            ctx.getPackageName() + ":drawable/" + m.photo.toLowerCase(), null, null), ctx.getTheme()
+            ));
+        }catch (Exception e){
+            photo
+                    .setImageDrawable(getResources().getDrawable(
+                            getResources().getIdentifier(
+                                    ctx.getPackageName()+":drawable/" +"err",null,null),ctx.getTheme()
+                    ));
+        }
 
 
         final String spec = m.seq+"/"+m.addr+"/"+m.email+"/"+m.name+"/"+m.pass+"/"+m.photo+"/"+m.phone;

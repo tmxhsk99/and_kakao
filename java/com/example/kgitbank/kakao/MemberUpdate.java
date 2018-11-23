@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MemberUpdate extends AppCompatActivity {
@@ -19,13 +20,13 @@ public class MemberUpdate extends AppCompatActivity {
         String spec = intent.getExtras().getString("spec"); /*String형*/
         Log.d("받은 것 ",spec);
         String arr[] = spec.split("/");
-        TextView name =findViewById(R.id.name);
+        EditText name =findViewById(R.id.name);
         name.setHint(arr[3]);
-        TextView email = findViewById(R.id.email);
+        EditText email = findViewById(R.id.email);
         email.setHint(arr[2]);
-        TextView phone = findViewById(R.id.phone);
+        EditText phone = findViewById(R.id.phone);
         phone.setHint(arr[6]);
-        TextView addr= findViewById(R.id.addr);
+        EditText addr= findViewById(R.id.addr);
         addr.setHint(arr[1]);
 
 

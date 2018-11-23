@@ -186,7 +186,7 @@ public class MemberList extends AppCompatActivity {
 
     static class ViewHolder {
         ImageView photo;
-        TextView name, phone;
+        TextView name, phone,email,addr;
     }
 
    /* private class PhotoQuery extends Main.QueryFactory {//직접 친 코드

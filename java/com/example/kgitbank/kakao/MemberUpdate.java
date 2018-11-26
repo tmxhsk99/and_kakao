@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MemberUpdate extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class MemberUpdate extends AppCompatActivity {
         phone.setHint(arr[6]);
         addr.setHint(arr[1]);
         pass.setHint(arr[4]);
-        /*try {
+         try {
 
         photo.setImageDrawable(
 
@@ -47,7 +48,7 @@ public class MemberUpdate extends AppCompatActivity {
                             getResources().getIdentifier(
                                     ctx.getPackageName()+":drawable/" +"err",null,null),ctx.getTheme()
                     ));
-        }*/
+        }
         //수정이후부분
         findViewById(R.id.confirmBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,14 +57,16 @@ public class MemberUpdate extends AppCompatActivity {
                 final itemUpdate query = new itemUpdate(ctx);
                 //member에 값을 넣는데 만약 EditText 가 NUll 이라면
                 //배열에 있는 값이라도 member에 할당해야 한다.
-                memeber.setName(name.getText().equals("") ? arr[3] : name.getText().toString());//null은 주소값이라 안됨
-                Log.d("이름 집어넣음",memeber.getName());
-                memeber.setEmail(email.getText().equals("") ? arr[2] : email.getText().toString());
-                memeber.setPhone(phone.getText().equals("") ? arr[6] : phone.getText().toString());
-                memeber.setAddr(addr.getText().equals("") ? arr[1] : addr.getText().toString());
-                memeber.setPass(pass.getText().equals("") ? arr[4] : pass.getText().toString());
-                memeber.setPhoto(photo.getResources().getAssets().toString().equals("") ? arr[5].toLowerCase() : pass.getText().toString());
-                Log.d("사진의 이름 집어넣음",memeber.getPhoto());
+                memeber.setName(name.getText().toString().equals("") ? arr[3] : name.getText().toString());//null은 주소값이라 안됨
+
+                Log.d("true false 판단",(name.getText().toString().equals("")+""));
+                Log.d("안집어넣음",arr[3]);
+                memeber.setEmail(email.getText().toString().equals("") ? arr[2] : email.getText().toString());
+                memeber.setPhone(phone.getText().toString().equals("") ? arr[6] : phone.getText().toString());
+                memeber.setAddr(addr.getText().toString().equals("") ? arr[1] : addr.getText().toString());
+                memeber.setPass(pass.getText().toString().equals("") ? arr[4] : pass.getText().toString());
+                memeber.setPhoto(arr[5].toLowerCase());
+                Log.d("사진의 이름 체크",arr[5].toLowerCase());
                 query.memeber = memeber;
                 //리턴타입 Void니 받지 않아도 된다.
                  new Main.ExcuteService() {
@@ -72,12 +75,18 @@ public class MemberUpdate extends AppCompatActivity {
                         query.excute();
                     }
                 }.perform();
+                Toast.makeText(ctx,"정보수정완료",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ctx, MemberDetail.class);
+                intent.putExtra("seq",String.valueOf(arr[0]));
+                startActivity(intent);
             }
         });
         findViewById(R.id.cancleBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(ctx, MemberDetail.class);
+                intent.putExtra("seq",String.valueOf(arr[0]));
+                startActivity(intent);
             }
         });
     }//onCreate 끝

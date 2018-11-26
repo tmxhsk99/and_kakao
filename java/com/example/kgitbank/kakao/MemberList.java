@@ -69,7 +69,7 @@ public class MemberList extends AppCompatActivity {
         mbrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> p, View v, int i, long l) {
-                Memeber m  = (Memeber) mbrList.getItemAtPosition(i);
+                final Memeber m  = (Memeber) mbrList.getItemAtPosition(i);
                 new AlertDialog.Builder(ctx)
                         .setTitle("삭 제")
                         .setMessage("정말 삭제 하시겠습니까?")
@@ -79,6 +79,14 @@ public class MemberList extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //삭제 쿼리
+                                       final ItemDelete query = new ItemDelete(ctx,String.valueOf(m.seq));
+                                            Log.d("전달 받은 seq의 값", m.seq+"");
+                                        new Main.ExcuteService(){
+                                            @Override
+                                            public void perform() {
+                                                query.execute();
+                                            }
+                                        }.perform();
                                         Toast.makeText(ctx,"삭제완료",Toast.LENGTH_LONG).show();
                                         startActivity(new Intent(ctx,MemberList.class));
                                     }
@@ -132,10 +140,11 @@ public class MemberList extends AppCompatActivity {
             this.seq = seq;
         }
         public void execute(){
-            String sql = String.format(" DELETE FROM %s %s = '%s' " +
+            String sql = String.format(" DELETE FROM %s " +
                                         " WHERE %s LIKE '%s' "
+                                        ,DBInfo.MBR_TABLE,DBInfo.MBR_SEQ,seq
                                         );           //DELETE중
-            
+            super.getDatabase().execSQL(sql);
         }
 
     }

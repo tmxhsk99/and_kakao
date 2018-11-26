@@ -58,7 +58,6 @@ public class MemberUpdate extends AppCompatActivity {
                 //member에 값을 넣는데 만약 EditText 가 NUll 이라면
                 //배열에 있는 값이라도 member에 할당해야 한다.
                 memeber.setName(name.getText().toString().equals("") ? arr[3] : name.getText().toString());//null은 주소값이라 안됨
-
                 Log.d("true false 판단",(name.getText().toString().equals("")+""));
                 Log.d("안집어넣음",arr[3]);
                 memeber.setEmail(email.getText().toString().equals("") ? arr[2] : email.getText().toString());

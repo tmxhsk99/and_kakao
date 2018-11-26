@@ -7,12 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.kgitbank.kakao.utill.Album;
+import com.example.kgitbank.kakao.utill.Email;
+import com.example.kgitbank.kakao.utill.Phone;
 
 public class MemberDetail extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class MemberDetail extends AppCompatActivity {
         String seq = intent.getExtras().getString("seq"); /*String형*/
         final ItemDetail query = new ItemDetail(ctx);
         query.seq = seq;
-       Memeber m = (Memeber) new Main.OjectService(){
+       final Memeber m = (Memeber) new Main.OjectService(){
 
             @Override
             public Object perform() {
@@ -74,6 +75,69 @@ public class MemberDetail extends AppCompatActivity {
                 startActivity(new Intent(intent));
             }
         });
+        findViewById(R.id.listBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ctx,MemberList.class));
+            }
+        });
+        findViewById(R.id.callBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Phone phone = new Phone(ctx,MemberDetail.this);
+                phone.setPhoneNum(m.phone);
+                phone.directCall();
+            }
+        });
+        findViewById(R.id.dialBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Phone phone = new Phone(ctx,MemberDetail.this);
+                phone.setPhoneNum(m.phone);
+                phone.dial();
+            }
+        });
+        findViewById(R.id.smsBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        findViewById(R.id.emailBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Email email1 = new Email(ctx);
+                email1.sendEmail ("tmxhsk99@naver.com");
+                //startActivity(new Intent(ctx,Email.class));
+
+            }
+        });
+        findViewById(R.id.albumBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ctx,Album.class));
+            }
+        });
+        findViewById(R.id.movieBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        findViewById(R.id.mapBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        findViewById(R.id.movieBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
     }
 
 

@@ -3,7 +3,7 @@
     package="com.example.kgitbank.kakao">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +23,8 @@
         <activity android:name=".MemberDetail" />
         <activity android:name=".MemberUpdate" />
         <activity android:name=".MemberAdd" />
-        <activity android:name=".utill.Album"></activity>
+        <activity android:name=".utill.Album" />
+        <activity android:name=".utill.Movie"></activity>
     </application>
 
 </manifest>

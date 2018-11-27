@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.kgitbank.kakao.utill.Album;
 import com.example.kgitbank.kakao.utill.Email;
+import com.example.kgitbank.kakao.utill.Movie;
 import com.example.kgitbank.kakao.utill.Phone;
 
 public class MemberDetail extends AppCompatActivity {
@@ -51,7 +52,7 @@ public class MemberDetail extends AppCompatActivity {
         TextView addr=findViewById(R.id.addr);
         addr.setText(m.getAddr());
         ImageView photo = findViewById(R.id.profile);
-        Log.d("포토이름 -----------------------------------",m.photo);
+
         try {
             photo.setImageDrawable(getResources().getDrawable(
                     getResources().getIdentifier(
@@ -121,6 +122,7 @@ public class MemberDetail extends AppCompatActivity {
         findViewById(R.id.movieBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(ctx,Movie.class));
 
             }
         });
@@ -133,7 +135,7 @@ public class MemberDetail extends AppCompatActivity {
         findViewById(R.id.movieBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(ctx,Movie.class));
             }
         });
 
